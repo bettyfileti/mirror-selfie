@@ -38,6 +38,7 @@ let capture;
 let fillEllipse = true;
 
 let userIsTouching = false;
+let textToLog = "";
 
 
 function setup() {
@@ -97,6 +98,11 @@ function draw() {
     text("Label 0:  " + label0_count + "  |  " + floor(label0_score) + "%", 10, 50);
     text("Label 1:  " + label1_count + "  |  " + floor(label1_score) + "%", 10, 70);
     text("Label 2:  " + label2_count + "  |  " + floor(label2_score) + "%", 10, 90);
+
+    textToLog = "No highlight test 1";
+
+    let mobileLog = document.getElementById("mobile-log");
+    mobileLog.textContent = textToLog;
 }
 
 // Seq #1
