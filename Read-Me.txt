@@ -1,1 +1,22 @@
+//Moon's start template: https://github.com/MOQN/IMALowRes-Make-Art-with-AI/blob/main/2.5_KNN_classifier/knn-05-feature-extractor-load/css/style.css
 //p5 sketch which uses mobile camera! https://editor.p5js.org/AndreasRef/sketches/uUvebvvcf
+//Model Training: https://editor.p5js.org/bethfileti/sketches/l20TvIjbG
+
+        <div id = "directions">
+            <p>
+                <ul>
+                    <li>Press "0" to add a sample to "0" label.</li>
+                    <li>Press "1" to add a sample to "1" label.</li>
+                    <li>Press "2" to add a sample to "2" label.</li>
+                </br>
+                    <li>Press " " (SpaceBar) to initiate the classification.</li>
+            </br>
+                    <li>Press ")" (shift+0) to clear all samples in "0" label.</li>
+                    <li>Press "!" (shift+1) to clear all samples in "1" label.</li>
+                    <li>Press "@" (shift+2) to clear all samples in "2" label.</li>
+                </br>
+        
+                    <li>Press "S" (shift+s) to save the stored sample data.</li>
+                    <li>Press "L" (shift+l) to load sample data from a JSON file.</li>
+            </p>
+        </div>

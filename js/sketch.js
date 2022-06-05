@@ -1,251 +1,251 @@
-//Prevent scroll
-document.getElementById( "no-scroll" ).onwheel = function(event){
-    event.preventDefault();
-};
-
-document.getElementById( "no-scroll" ).onmousewheel = function(event){
-    event.preventDefault();
-};
-
-console.log("ml5 version:", ml5.version);
-
-let isModelReady = false;
-let isVideoReady = false;
-let isClassifying = false;
-
-let video;
-const knnClassifier = ml5.KNNClassifier();
-let featureExtractor;
-
-let resultLabel = "";
-let resultScore = 0.0;
-
-let label0_score = 0.0;
-let label1_score = 0.0;
-let label2_score = 0.0;
-let label0_count = 0;
-let label1_count = 0;
-let label2_count = 0;
-
-let isAMirrorSelfie = {
-    label_score : 0.0,
-    label_count : 0,
-    label_text : "This is a mirror selfie."
-}
-
-let notAMirrorSelfie = {
-    label_score : 0.0,
-    label_count : 0,
-    label_text : "This is NOT a mirror selfie."
-}
-
-//------
-//Mobile
-//------
-
 let capture;
-let fillEllipse = true;
-
+let touchToggle = true;
 let userIsTouching = false;
-let textToLog = "";
+let versionLog = "adding buttons - v1";
+let textToLog;
 
+let btn_selfie = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 50,
+  text: "Touch here if mirror selfie",
+  fillColor: "lightyellow"
+};
+
+let btn_notSelfie = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 50,
+  text: "Here if NOT a mirror selfie",
+  fillColor: "lightblue"
+};
+
+let btn_classify = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  text: "Start Classification",
+  fillColor: "lightgreen"
+};
+
+let btn_saveJSON = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  text: "Save JSON",
+  fillColor: "hotpink"
+};
+
+let inputBoxes = [];
 
 function setup() {
-    background(50);
+  //------
+  // KNN setup
+  //------
+  featureExtractor = ml5.featureExtractor("MobileNet", modelReady);
 
-    featureExtractor = ml5.featureExtractor("MobileNet", modelReady);
-    video = createCapture(VIDEO, videoReady);
-    video.hide();
+  //------
+  // Mobile setup
+  //------
+  let constraints;
+  if (isMobile.any()) {
+    constraints = {
+      audio: false,
+      video: {
+        facingMode: {
+          exact: "environment",
+        },
+      },
+    };
+  } else {
+    console.log("Working on desktop");
+    constraints = {
+      audio: false,
+      video: {
+        facingMode: "user",
+      },
+    };
+  }
+  createCanvas(displayWidth, displayHeight - 100);
+  capture = createCapture(constraints, videoReady);
 
-    let cnv = createCanvas(displayWidth, displayHeight - 100);
-    cnv.parent("canvas-container");
+  capture.hide();
 
-    let constraints = {
-        audio: false,
-        video: {
-            facingMode: {
-                exact: "environment"
-            }
-        }
-    }
-
-    capture = createCapture(constraints);
-    capture.hide();
-    rectMode(CENTER);
+  btn_selfie.width = width / 2;
+  btn_notSelfie.x = width / 2;
+  btn_notSelfie.width = width / 2;
+  btn_classify.x = 0;
+  btn_classify.y = height - 50;
+  btn_classify.width = width/2;
+  btn_classify.height = 50;
+  btn_saveJSON.x = width/2;
+  btn_saveJSON.y = btn_classify.y
+  btn_saveJSON.width = width/2;
+  btn_saveJSON.height = 50;
 }
-
 
 function draw() {
-    background(50);
-    image(capture, 0, 100);
+  image(capture, 0, 50);
 
-    if (isClassifying) {
-        // do something with the "resultLabel."
-    }
+  fill(btn_selfie.fillColor);
+  rect(btn_selfie.x, 
+       btn_selfie.y, 
+       btn_selfie.width, 
+       btn_selfie.height);
+  fill("black");
+  text(btn_selfie.text, 
+       btn_selfie.x + 5, 
+       btn_selfie.y + 25);
 
-    if (userIsTouching){
-        push();
-        fill("yellow");
-        rect(0, 0, 50, 50);
+  fill(btn_notSelfie.fillColor);
+  rect(btn_notSelfie.x, 
+       btn_notSelfie.y, 
+       btn_notSelfie.width, 
+       btn_notSelfie.height);
+  fill("black");
+  text(btn_notSelfie.text, 
+       btn_notSelfie.x + 5, 
+       btn_notSelfie.y + 25);
 
-        fill("red");
-        rect(mouseX, mouseY, 20, 20);
-        pop();
-    }
+  fill(btn_classify.fillColor);
+  rect(btn_classify.x, 
+       btn_classify.y, 
+       btn_classify.width, 
+       btn_classify.height);
+  fill("black");
+  text(btn_classify.text, 
+       btn_classify.x + 5, 
+       btn_classify.y + 25);
 
-    fill(0, 255, 0);
-    text(resultLabel + ": " + resultScore, 10, 20);
+  fill(btn_saveJSON.fillColor);
+  rect(btn_saveJSON.x, 
+       btn_saveJSON.y, 
+       btn_saveJSON.width, 
+       btn_saveJSON.height);
+  fill("black");
+  text(btn_saveJSON.text, 
+       btn_saveJSON.x + 5, 
+       btn_saveJSON.y + 25);
 
-    text("Label 0:  " + label0_count + "  |  " + floor(label0_score) + "%", 10, 50);
-    text("Label 1:  " + label1_count + "  |  " + floor(label1_score) + "%", 10, 70);
-    text("Label 2:  " + label2_count + "  |  " + floor(label2_score) + "%", 10, 90);
+  if (isClassifying) {
+    // do something with the "resultLabel."
+  }
 
-    textToLog = "No scroll test 1";
-
-    let mobileLog = document.getElementById("mobile-log");
-    mobileLog.textContent = textToLog;
-}
-
-// Seq #1
-function modelReady() {
-    console.log("Model Loaded: FeatureExtractor");
-    isModelReady = true;
-    loadKNNDataset();
-}
-// Seq #2
-function videoReady() {
-    console.log("Device Ready");
-    isVideoReady = true;
-    loadKNNDataset();
-}
-// Seq #3
-function loadKNNDataset() {
-    if (isModelReady && isVideoReady) {
-        //knnClassifier.load("./myKNNDataset.json", KNNDatasetReady);
-    }
-}
-// Seq #4
-function KNNDatasetReady() {
-    console.log("Loaded: KNN Dataset");
-    updateCounts();
-
-    initClassification();
-}
-
-// Seq #5
-function initClassification() {
-    isClassifying = true;
-    console.log("Init Classification");
-    classify();
-}
-
-function keyPressed() {
-    //
-    if (key === "0") {
-        addExample("0");
-    } else if (key === "1") {
-        addExample("1");
-    } else if (key === "2") {
-        addExample("2");
-    }
-    // key press with shift
-    else if (key === ")") {
-        clearLabel("0");
-    } else if (key === "!") {
-        clearLabel("1");
-    } else if (key === "@") {
-        clearLabel("2");
-    }
-    // init the classification
-    else if (key === " ") {
-        classify();
-    }
-    // key press with shift
-    else if (key === "S") {
-        saveMyKNN();
-    } else if (key === "L") {
-        loadMyKNN();
-    }
-
+  detectMobileInfo();
+  displayModelInfo();
+  updateTextLog();
 }
 
 function touchStarted() {
-    userIsTouching = true;
+  touchToggle = !touchToggle;
+  userIsTouching = true;
 }
 
 function touchEnded() {
-    userIsTouching = false;
+  userIsTouching = false;
 }
 
-//------
+function touchMoved() {
+  // otherwise the display will move around with your touch :(
+  return false;
+}
 
-// Predict the current frame.
-function classify() {
-    // Get the total number of labels from knnClassifier
-    const numLabels = knnClassifier.getNumLabels();
-    if (numLabels <= 0) {
-        console.error("There is no examples in any label");
-        return;
+function updateTextLog() {
+  let mobileLog = document.getElementById("mobile-log");
+  mobileLog.textContent = textToLog;
+}
+
+function detectMobileInfo() {
+  if (isMobile.any()) {
+    textToLog = "Mobile Detected: " + mouseX + " " + userIsTouching;
+
+    if (userIsTouching) {
+      textToLog = versionLog + " | Touching | (" + mouseX + "," + mouseY + ")";
+      checkInput1();
+      checkInput2();
+      checkInput3();
+      checkInput4();
+    } else {
+      textToLog = versionLog + " | No touching";
     }
-    // Get the features of the input video
-    const features = featureExtractor.infer(video);
-    knnClassifier.classify(features, gotResults);
-}
-
-// Show the results
-function gotResults(err, result) {
-    // Display any error
-    if (err) {
-        console.error(err);
+  } else {
+    textToLog = "On Desktop: " + userIsTouching;
+    if (mouseIsPressed) {
+      checkInput1();
+      checkInput2();
+      checkInput3();
+      checkInput4();
     }
+  }
+}
 
-    if (result.confidencesByLabel) {
-        const confidences = result.confidencesByLabel;
-        // result.label is the label that has the highest confidence
-        if (result.label) {
-            resultLabel = result.label;
-            resultScore = confidences[result.label] * 100;
-        }
-        label0_score = confidences["0"] * 100;
-        label1_score = confidences["1"] * 100;
-        label2_score = confidences["2"] * 100;
+function checkInput1() {
+  if (
+    mouseX > btn_selfie.x &&
+    mouseX < btn_selfie.x + btn_selfie.width &&
+    mouseY > btn_selfie.y &&
+    mouseY < btn_selfie.y + btn_selfie.height
+  ) {
+    btn_selfie.fillColor = "yellow";
+    textToLog = "Logging a Mirror Selfie";
+    addExample("mirrorSelfie");
+  } else {
+      btn_selfie.fillColor = "lightyellow";
+
+  }
+}
+
+function checkInput2() {
+  if (
+    mouseX > btn_notSelfie.x &&
+    mouseX < btn_notSelfie.x + btn_notSelfie.width &&
+    mouseY > btn_notSelfie.y &&
+    mouseY < btn_notSelfie.y + btn_notSelfie.height
+  ) {
+    btn_notSelfie.fillColor = "cyan";
+    textToLog = "Logging NOT a Mirror Selfie"
+    addExample("notMirrorSelfie");
+  } else {
+      btn_notSelfie.fillColor = "lightblue";
+
+  }
+}
+
+function checkInput3() {
+  if (
+    mouseX > btn_classify.x &&
+    mouseX < btn_classify.x + btn_classify.width &&
+    mouseY > btn_classify.y &&
+    mouseY < btn_classify.y + btn_classify.height
+  ) {
+    btn_classify.fillColor = "green";
+    textToLog = "Starting Classification";
+    initClassification();
+
+  } else {
+    btn_classify.fillColor = "lightgreen";
+  }
+}
+
+function checkInput4() {
+  if (!isClassifying) {
+    if (
+      mouseX > btn_saveJSON.x &&
+      mouseX < btn_saveJSON.x + btn_saveJSON.width &&
+      mouseY > btn_saveJSON.y &&
+      mouseY < btn_saveJSON.y + btn_saveJSON.height
+    ) {
+      btn_saveJSON.fillColor = "pink";
+      btn_savingJSON.text = "Saving JSON";
+      textToLog = "Saving JSON";
+      saveMyKNN();
     }
-
-    classify();
-}
-
-function addExample(label) {
-    const features = featureExtractor.infer(video);
-    knnClassifier.addExample(features, label);
-    updateCounts();
-}
-
-// Clear the examples in one label
-function clearLabel(label) {
-    knnClassifier.clearLabel(label);
-    updateCounts();
-}
-
-// Clear all the examples in all labels
-function clearAllLabels() {
-    knnClassifier.clearAllLabels();
-    updateCounts();
-}
-
-// Save dataset as myKNNDataset.json
-function saveMyKNN() {
-    knnClassifier.save("myKNNDataset");
-    console.log("Saved: KNN Dataset");
-}
-
-// Load dataset to the classifier
-function loadMyKNN() {
-    knnClassifier.load("./myKNNDataset.json", KNNDatasetReady);
-}
-
-function updateCounts() {
-    const counts = knnClassifier.getCountByLabel();
-    label0_count = counts["0"];
-    label1_count = counts["1"];
-    label2_count = counts["2"];
+  } else {
+    btn_saveJSON.fillColor = "hotpink";
+    btn_saveJSON.text = "Save JSON";
+  }
 }
