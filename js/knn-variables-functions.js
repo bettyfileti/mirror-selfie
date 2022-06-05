@@ -81,14 +81,13 @@ function videoReady() {
 
 function loadKNNDataset() {
   if (isModelReady && isVideoReady) {
-    //knnClassifier.load("./myKNNDataset.json", KNNDatasetReady);
+    knnClassifier.load("./myKNNDataset.json", KNNDatasetReady);
   }
 }
 
 function KNNDatasetReady() {
   console.log("Loaded: KNN Dataset");
   updateCounts();
-
   initClassification();
 }
 
