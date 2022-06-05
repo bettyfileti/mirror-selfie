@@ -1,3 +1,12 @@
+//Prevent scroll
+document.getElementById( "no-scroll" ).onwheel = function(event){
+    event.preventDefault();
+};
+
+document.getElementById( "no-scroll" ).onmousewheel = function(event){
+    event.preventDefault();
+};
+
 console.log("ml5 version:", ml5.version);
 
 let isModelReady = false;
@@ -42,15 +51,13 @@ let textToLog = "";
 
 
 function setup() {
-    // let cnv = createCanvas(640, 480 + 100);
-    // cnv.parent("canvas-container");
     background(50);
 
     featureExtractor = ml5.featureExtractor("MobileNet", modelReady);
     video = createCapture(VIDEO, videoReady);
     video.hide();
 
-    let cnv = createCanvas(displayWidth, displayHeight);
+    let cnv = createCanvas(displayWidth, displayHeight - 100);
     cnv.parent("canvas-container");
 
     let constraints = {
@@ -60,11 +67,6 @@ function setup() {
                 exact: "environment"
             }
         }
-
-        // I'm not sure why this is here and commented out...
-        // video: {
-        //     facingMode: "user"
-        // }
     }
 
     capture = createCapture(constraints);
@@ -75,8 +77,7 @@ function setup() {
 
 function draw() {
     background(50);
-    //image(video, 0, 100);
-    image(capture, 0, 0);
+    image(capture, 0, 100);
 
     if (isClassifying) {
         // do something with the "resultLabel."
@@ -99,7 +100,7 @@ function draw() {
     text("Label 1:  " + label1_count + "  |  " + floor(label1_score) + "%", 10, 70);
     text("Label 2:  " + label2_count + "  |  " + floor(label2_score) + "%", 10, 90);
 
-    textToLog = "No highlight test 2";
+    textToLog = "No scroll test 1";
 
     let mobileLog = document.getElementById("mobile-log");
     mobileLog.textContent = textToLog;
