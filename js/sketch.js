@@ -31,12 +31,13 @@ let notAMirrorSelfie = {
 }
 
 //------
-//Mobile Camera
+//Mobile
 //------
 
 let capture;
 let fillEllipse = true;
 
+let userIsTouching = false;
 
 
 function setup() {
@@ -78,6 +79,16 @@ function draw() {
 
     if (isClassifying) {
         // do something with the "resultLabel."
+    }
+
+    if (userIsTouching){
+        push();
+        fill("yellow");
+        rect(0, 0, 50, 50);
+
+        fill("red");
+        rect(mouseX, mouseY, 20, 20);
+        pop();
     }
 
     fill(0, 255, 0);
@@ -152,11 +163,11 @@ function keyPressed() {
 }
 
 function touchStarted() {
-    push();
-    background("red");
-    fill("purple")
-    rect(0, 0, width/2, 100);
-    pop();
+    userIsTouching = true;
+}
+
+function touchEnded() {
+    userIsTouching = false;
 }
 
 //------
