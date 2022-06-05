@@ -99,7 +99,7 @@ function draw() {
     text("Label 1:  " + label1_count + "  |  " + floor(label1_score) + "%", 10, 70);
     text("Label 2:  " + label2_count + "  |  " + floor(label2_score) + "%", 10, 90);
 
-    textToLog = "No highlight test 1";
+    textToLog = "No highlight test 2";
 
     let mobileLog = document.getElementById("mobile-log");
     mobileLog.textContent = textToLog;
