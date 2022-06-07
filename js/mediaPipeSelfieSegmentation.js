@@ -61,6 +61,7 @@ async function loadBodySegmentationModel() {
     // or 'base/node_modules/@mediapipe/selfie_segmentation' in npm.
   };
   segmenter = await bodySegmentation.createSegmenter(model, segmenterConfig);
+  textToLog = "Model Loaded";
   console.log("Model Loaded!");
 }
 
