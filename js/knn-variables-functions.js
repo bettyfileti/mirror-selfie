@@ -37,7 +37,7 @@ let notAMirrorSelfie = {
 // KNN functions
 //--------------------------------------------------------------
 
-function displayModelInfo(){
+function displayModelInfo(){  
   let yShift = 60;
   fill(0, 255, 0);
   push();
@@ -68,37 +68,32 @@ function displayModelInfo(){
 }
 
 function modelReady() {
-  textToLog = "Model Loaded: Feature Extractor";
   console.log("Model Loaded: FeatureExtractor");
   isModelReady = true;
-  //loadKNNDataset();
+  loadKNNDataset();
 }
 
 function videoReady() {
-  textToLog = "Device Ready";
-    console.log("Device Ready");
-
+  console.log("Device Ready");
   isVideoReady = true;
   loadKNNDataset();
-  camReady();
 }
 
 function loadKNNDataset() {
   if (isModelReady && isVideoReady) {
-    knnClassifier.load("./myKNNDataset.json", KNNDatasetReady);
+    //knnClassifier.load("./myKNNDataset.json", KNNDatasetReady);
   }
 }
 
 function KNNDatasetReady() {
-    textToLog = "Loaded: KNN Dataset";
   console.log("Loaded: KNN Dataset");
   updateCounts();
+
   initClassification();
 }
 
 function initClassification() {
   isClassifying = true;
-  textToLog = "Init Classification";
   console.log("Init Classification");
   classify();
 }

@@ -3,7 +3,7 @@
 let capture;
 let touchToggle = true;
 let userIsTouching = false;
-let versionLog = "reverting";
+let versionLog = "reverting 2";
 let textToLog;
 
 let btn_selfie = {
