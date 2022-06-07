@@ -49,6 +49,7 @@ function draw() {
 
 function camReady() {
   console.log("Webcam Ready!");
+  textToLog = "Webcam Ready!";
   loadBodySegmentationModel();
 }
 

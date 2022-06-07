@@ -68,13 +68,16 @@ function displayModelInfo(){
 }
 
 function modelReady() {
+    textToLog = "Model Loaded: Feature Extractor";
   console.log("Model Loaded: FeatureExtractor");
   isModelReady = true;
   loadKNNDataset();
 }
 
 function videoReady() {
-  console.log("Device Ready");
+  textToLog = "Device Ready";
+    console.log("Device Ready");
+
   isVideoReady = true;
   loadKNNDataset();
   camReady();
@@ -87,6 +90,7 @@ function loadKNNDataset() {
 }
 
 function KNNDatasetReady() {
+    textToLog = "Loaded: KNN Dataset";
   console.log("Loaded: KNN Dataset");
   updateCounts();
   initClassification();
@@ -94,6 +98,7 @@ function KNNDatasetReady() {
 
 function initClassification() {
   isClassifying = true;
+  textToLog = "Init Classification";
   console.log("Init Classification");
   classify();
 }
