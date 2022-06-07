@@ -68,10 +68,10 @@ function displayModelInfo(){
 }
 
 function modelReady() {
-    textToLog = "Model Loaded: Feature Extractor";
+  textToLog = "Model Loaded: Feature Extractor";
   console.log("Model Loaded: FeatureExtractor");
   isModelReady = true;
-  loadKNNDataset();
+  //loadKNNDataset();
 }
 
 function videoReady() {

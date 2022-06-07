@@ -3,7 +3,7 @@
 let capture;
 let touchToggle = true;
 let userIsTouching = false;
-let versionLog = "adding buttons - v1";
+let versionLog = "reverting";
 let textToLog;
 
 let btn_selfie = {
