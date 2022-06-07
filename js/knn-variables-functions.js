@@ -77,6 +77,7 @@ function videoReady() {
   console.log("Device Ready");
   isVideoReady = true;
   loadKNNDataset();
+  camReady();
 }
 
 function loadKNNDataset() {
